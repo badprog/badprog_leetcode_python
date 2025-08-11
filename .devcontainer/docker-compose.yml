@@ -1,5 +1,3 @@
-# badprog.com
-
 services:
   devcontainer:
     build:
@@ -7,7 +5,5 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspace:cached
-    environment:
-      - PYTHONPATH=$(/workspace/.devcontainer/identify_projects.sh | tr '\n' ':')
-    command: /bin/bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$$project_dir/tests\" ]; then echo \"Running tests for \$(basename \$$project_dir)...\"; export PYTHONPATH=\"\$$project_dir:\$$PYTHONPATH\"; pytest \"\$$project_dir/tests/\" -v; export PYTHONPATH=\$${PYTHONPATH//\$$project_dir:/}; fi; done"
+    command: /bin/bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$$project_dir/tests\"; then echo \"Running tests for \$(basename \$$project_dir)...\"; export PYTHONPATH=\"\$$project_dir:\$$PYTHONPATH\"; pytest \"\$$project_dir/tests/\" -v; export PYTHONPATH=\$${PYTHONPATH//\$$project_dir:/}; fi; done"
     working_dir: /workspace
