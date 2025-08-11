@@ -1,0 +1,23 @@
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ../.devcontainer:/workspace/.devcontainer:cached
+      - ../p_1_two_sum:/workspace/p_1_two_sum:cached
+      - ../.dockerignore:/workspace/.dockerignore:cached
+      - ../.gitignore:/workspace/.gitignore:cached
+      - ../LICENSE:/workspace/LICENSE:cached
+      - ../README.md:/workspace/README.md:cached
+      - ../.github:/workspace/.github:cached
+      - venv:/workspace/venv
+      - pycache:/workspace/pycache
+      - pytest_cache:/workspace/.pytest_cache
+    entrypoint: ["/workspace/.devcontainer/entrypoint.sh"]
+    working_dir: /workspace
+
+volumes:
+  venv:
+  pycache:
+  pytest_cache:
