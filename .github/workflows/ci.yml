@@ -38,13 +38,14 @@ jobs:
 
       - name: Set PYTHONPATH
         run: |
-          export PYTHONPATH=$PWD/p_1_two_sum:$PWD/p_1_two_sum/src
+          export PYTHONPATH=$PWD:$PWD/p_1_two_sum:$PWD/p_1_two_sum/src
           echo "PYTHONPATH=$PYTHONPATH"
 
       - name: Run pytest
         run: |
           source venv/bin/activate
           cd p_1_two_sum
+          export PYTHONPATH=.:$PYTHONPATH
           echo "Running tests for p_1_two_sum..."
           pytest tests/ -v --cov=src
           cd ..
@@ -53,6 +54,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd p_1_two_sum
+          export PYTHONPATH=.:$PYTHONPATH
           echo "Running pylint for p_1_two_sum..."
           pylint --disable=C,R,W --fail-under=8.0 src/*.py tests/*.py
           cd ..
