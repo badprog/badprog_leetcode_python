@@ -1,9 +1,8 @@
-# badprog.com
-
 name: CI Pipeline
 
 env:
   IMAGE_NAME: badprog_leetcode_python
+  PROJECT_LOOP: bash -c "source /workspace/venv/bin/activate && if [ ! -d /workspace/venv ]; then python -m venv /workspace/venv; fi && pip install black isort pylint pytest pytest-cov mypy && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do"
 
 on:
   push:
@@ -33,15 +32,15 @@ jobs:
 
       - name: Run linter (Pylint)
         run: |
-          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/src\" ]; then pylint --disable=C,R,W --fail-under=8.0 \$project_dir/src/*.py \$project_dir/tests/*.py; fi; done"
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer ${{ env.PROJECT_LOOP }} if [ -d "\$project_dir/src" ]; then pylint --disable=C,R,W --fail-under=8.0 \$project_dir/src/*.py \$project_dir/tests/*.py; fi; done"
 
       - name: Check code formatting (Black)
         run: |
-          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/src\" ]; then black --check \$project_dir/src \$project_dir/tests; fi; done"
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer ${{ env.PROJECT_LOOP }} if [ -d "\$project_dir/src" ]; then black --check \$project_dir/src \$project_dir/tests; fi; done"
 
       - name: Run tests (Pytest)
         run: |
-          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/tests\" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi; done"
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer ${{ env.PROJECT_LOOP }} if [ -d "\$project_dir/tests" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi; done"
 
   push-docker:
     needs: build-and-test
