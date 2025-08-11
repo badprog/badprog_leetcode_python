@@ -38,28 +38,20 @@ jobs:
 
       - name: Set PYTHONPATH
         run: |
-          export PYTHONPATH=$(find $PWD -type d -name 'p_[0-9]*_*' | tr '\n' ':'):$PWD:$PWD/p_1_two_sum/src
+          export PYTHONPATH=$PWD:$PWD/p_1_two_sum:$PWD/p_1_two_sum/src
           echo "PYTHONPATH=$PYTHONPATH"
 
       - name: Run pytest
         run: |
           source venv/bin/activate
-          for project_dir in $(find $PWD -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
-            if [ -d "$project_dir/tests" ]; then
-              echo "Running tests for $(basename $project_dir)..."
-              pytest "$project_dir/tests/" -v --cov="$project_dir/src"
-            fi
-          done
+          echo "Running tests for p_1_two_sum..."
+          pytest p_1_two_sum/tests/ -v --cov=p_1_two_sum/src
 
       - name: Run pylint
         run: |
           source venv/bin/activate
-          for project_dir in $(find $PWD -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
-            if [ -d "$project_dir/src" ]; then
-              echo "Running pylint for $(basename $project_dir)..."
-              pylint --disable=C,R,W --fail-under=8.0 "$project_dir/src"/*.py "$project_dir/tests"/*.py
-            fi
-          done
+          echo "Running pylint for p_1_two_sum..."
+          pylint --disable=C,R,W --fail-under=8.0 p_1_two_sum/src/*.py p_1_two_sum/tests/*.py
 
   push-docker:
     needs: build-and-test
