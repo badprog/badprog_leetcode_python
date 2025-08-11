@@ -1,6 +1,6 @@
 ######################################
 # import
-from solution import Solution # from file import class
+from .solution import Solution # from file import class
 
 ####################################
 def hello(name: str) -> str:

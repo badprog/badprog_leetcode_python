@@ -1,6 +1,6 @@
 from typing import List
 import pytest
-from src.solution import Solution
+from ..src.solution import Solution
 
 @pytest.fixture
 def solution():
