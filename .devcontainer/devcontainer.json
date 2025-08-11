@@ -1,0 +1,12 @@
+{
+  "name": "badprog_leetcode_python",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  },
+  "postCreateCommand": "pip install black isort pylint pytest pytest-cov mypy"
+}
