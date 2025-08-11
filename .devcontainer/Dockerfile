@@ -22,4 +22,3 @@ ENV PATH="/workspace/venv/bin:$PATH"
 RUN pip install black isort pylint pytest pytest-cov mypy
 
 # Command
-CMD ["python", "-m", "pytest", "--cov=."]

@@ -1,3 +1,5 @@
+# badprog.com
+
 name: CI Pipeline
 
 env:
@@ -26,17 +28,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
-        run: docker build -t ${{ env.IMAGE_NAME }} -f .devcontainer/Dockerfile .
+      - name: Build Docker Compose image
+        run: docker compose -f .devcontainer/docker-compose.yml build
 
       - name: Run linter (Pylint)
-        run: docker run --rm ${{ env.IMAGE_NAME }} pylint --disable=C,R,W --fail-under=8.0 **/*.py
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/src\" ]; then pylint --disable=C,R,W --fail-under=8.0 \$project_dir/src/*.py \$project_dir/tests/*.py; fi; done"
 
-      - name: Check code formatting
-        run: docker run --rm ${{ env.IMAGE_NAME }} black --check .
+      - name: Check code formatting (Black)
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/src\" ]; then black --check \$project_dir/src \$project_dir/tests; fi; done"
 
-      - name: Run tests in container
-        run: docker run --rm ${{ env.IMAGE_NAME }} pytest --cov=.
+      - name: Run tests (Pytest)
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$project_dir/tests\" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi; done"
 
   push-docker:
     needs: build-and-test
