@@ -1,16 +1,10 @@
 name: CI Pipeline
 
-env:
-  IMAGE_NAME: badprog_leetcode_python
-  PROJECT_LOOP: source /workspace/venv/bin/activate && if [ ! -d /workspace/venv ]; then python -m venv /workspace/venv && pip install black isort pylint pytest pytest-cov mypy; fi && for project_dir in $(find /workspace -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
-
 on:
   push:
-    branches:
-      - "**"
+    branches: ["**"]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
@@ -24,20 +18,48 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Build Docker Compose image
-        run: docker compose -f .devcontainer/docker-compose.yml build
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install black isort pylint pytest pytest-cov mypy
 
-      # - name: Run linter (Pylint)
-      #   run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/src\" ]; then pylint --disable=C,R,W --fail-under=8.0 \$project_dir/src/*.py \$project_dir/tests/*.py; fi; done"
+      - name: Configure environment
+        run: |
+          export PYTHONPYCACHEPREFIX=$PWD/pycache
+          mkdir -p $PWD/pycache
+          export PYTEST_CACHE_DIR=$PWD/.pytest_cache
+          mkdir -p $PWD/.pytest_cache
 
-      # - name: Check code formatting (Black)
-      #   run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/src\" ]; then black --check \$project_dir/src \$project_dir/tests; fi; done"
+      - name: Set PYTHONPATH
+        run: |
+          export PYTHONPATH=$(find $PWD -type d -name 'p_[0-9]*_*' | tr '\n' ':'):$PWD:$PWD/p_1_two_sum/src
+          echo "PYTHONPATH=$PYTHONPATH"
 
-      - name: Run tests (Pytest)
-        run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/tests\" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi; done"
+      - name: Run pytest
+        run: |
+          source venv/bin/activate
+          for project_dir in $(find $PWD -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
+            if [ -d "$project_dir/tests" ]; then
+              echo "Running tests for $(basename $project_dir)..."
+              pytest "$project_dir/tests/" -v --cov="$project_dir/src"
+            fi
+          done
+
+      - name: Run pylint
+        run: |
+          source venv/bin/activate
+          for project_dir in $(find $PWD -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
+            if [ -d "$project_dir/src" ]; then
+              echo "Running pylint for $(basename $project_dir)..."
+              pylint --disable=C,R,W --fail-under=8.0 "$project_dir/src"/*.py "$project_dir/tests"/*.py
+            fi
+          done
 
   push-docker:
     needs: build-and-test
