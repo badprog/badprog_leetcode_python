@@ -2,7 +2,7 @@ name: CI Pipeline
 
 env:
   IMAGE_NAME: badprog_leetcode_python
-  PROJECT_LOOP: source /workspace/venv/bin/activate && if [ ! -d /workspace/venv ]; then python -m venv /workspace/venv && pip install black isort pylint pytest pytest-cov mypy; fi && for project_dir in $(/workspace/.devcontainer/identify_projects.sh); do
+  PROJECT_LOOP: source /workspace/venv/bin/activate && if [ ! -d /workspace/venv ]; then python -m venv /workspace/venv && pip install black isort pylint pytest pytest-cov mypy; fi && for project_dir in $(find /workspace -maxdepth 1 -type d -name 'p_[0-9]*_*'); do
 
 on:
   push:
@@ -37,32 +37,4 @@ jobs:
         run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/src\" ]; then black --check \$project_dir/src \$project_dir/tests; fi; done"
 
       - name: Run tests (Pytest)
-        run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/tests\" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi; done"
-
-  push-docker:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: .devcontainer/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}:latest
-          platforms: linux/amd64
+        run: docker compose -f .devcontainer/docker-compose.yml run devcontainer bash -c "${{ env.PROJECT_LOOP }} if [ -d \"\$project_dir/tests\" ]; then pytest \$project_dir/tests/ --cov=\$project_dir/src; fi;
