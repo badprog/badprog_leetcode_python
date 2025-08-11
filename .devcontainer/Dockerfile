@@ -11,14 +11,7 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /workspace
 
-# Copy project files
-COPY . .
-
-# Create and activate virtual environment
-RUN python -m venv /workspace/venv
-ENV PATH="/workspace/venv/bin:$PATH"
-
-# Install Python tools
-RUN pip install black isort pylint pytest pytest-cov mypy
-
-# Command
+# Copy and make scripts executable
+COPY .devcontainer/identify_projects.sh /workspace/.devcontainer/
+COPY .devcontainer/entrypoint.sh /workspace/.devcontainer/
+RUN chmod +x /workspace/.devcontainer/identify_projects.sh /workspace/.devcontainer/entrypoint.sh

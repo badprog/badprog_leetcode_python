@@ -4,6 +4,20 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     volumes:
-      - ..:/workspace:cached
-    command: /bin/bash -c "source /workspace/venv/bin/activate && for project_dir in \$(/workspace/.devcontainer/identify_projects.sh); do if [ -d \"\$$project_dir/tests\"; then echo \"Running tests for \$(basename \$$project_dir)...\"; export PYTHONPATH=\"\$$project_dir:\$$PYTHONPATH\"; pytest \"\$$project_dir/tests/\" -v; export PYTHONPATH=\$${PYTHONPATH//\$$project_dir:/}; fi; done"
+      - ../.devcontainer:/workspace/.devcontainer:cached
+      - ../p_1_two_sum:/workspace/p_1_two_sum:cached
+      - ../.dockerignore:/workspace/.dockerignore:cached
+      - ../.gitignore:/workspace/.gitignore:cached
+      - ../LICENSE:/workspace/LICENSE:cached
+      - ../README.md:/workspace/README.md:cached
+      - ../.github:/workspace/.github:cached
+      - venv:/workspace/venv
+      - pycache:/workspace/pycache
+      - pytest_cache:/workspace/.pytest_cache
+    entrypoint: ["/workspace/.devcontainer/entrypoint.sh"]
     working_dir: /workspace
+
+volumes:
+  venv:
+  pycache:
+  pytest_cache:
