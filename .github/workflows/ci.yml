@@ -36,17 +36,12 @@ jobs:
           export PYTEST_CACHE_DIR=$PWD/.pytest_cache
           mkdir -p $PWD/.pytest_cache
 
-      - name: Set PYTHONPATH
-        run: |
-          export PYTHONPATH=$PWD:$PWD/p_1_two_sum:$PWD/p_1_two_sum/src
-          echo "PYTHONPATH=$PYTHONPATH"
-
-      - name: Run tests with Python script (run_tests.py)
+      - name: Run Pytest
         run: |
           source venv/bin/activate
-          python run_tests.py
+          python run_pytest.py
 
-      - name: Run pylint
+      - name: Run Pylint
         run: |
           source venv/bin/activate
           python run_pylint.py
