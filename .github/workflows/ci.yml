@@ -41,23 +41,15 @@ jobs:
           export PYTHONPATH=$PWD:$PWD/p_1_two_sum:$PWD/p_1_two_sum/src
           echo "PYTHONPATH=$PYTHONPATH"
 
-      - name: Run pytest
+      - name: Run tests with Python script (run_tests.py)
         run: |
           source venv/bin/activate
-          cd p_1_two_sum
-          export PYTHONPATH=.:$PYTHONPATH
-          echo "Running tests for p_1_two_sum..."
-          pytest tests/ -v --cov=src
-          cd ..
+          python run_tests.py
 
       - name: Run pylint
         run: |
           source venv/bin/activate
-          cd p_1_two_sum
-          export PYTHONPATH=.:$PYTHONPATH
-          echo "Running pylint for p_1_two_sum..."
-          pylint --disable=C,R,W --fail-under=8.0 src/*.py tests/*.py
-          cd ..
+          python run_pylint.py
 
   push-docker:
     needs: build-and-test
