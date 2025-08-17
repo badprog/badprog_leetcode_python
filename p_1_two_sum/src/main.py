@@ -2,7 +2,7 @@
 
 ######################################
 # import
-from solution import Solution # from file import class
+from src.solution import Solution # from file import class
 
 ####################################
 def hello(name: str) -> str:
