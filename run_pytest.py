@@ -15,7 +15,7 @@ results = {}
 
 # Main loop
 for proj in projects:
-    print(f"\n=== Running tests for {proj.name} ===")
+    print(f"\n=== Running Pytest for {proj.name} ===")
     tests = proj / "tests" # tests/ folder
 
     env = os.environ.copy() # each sub-proj uses its own env
@@ -32,12 +32,12 @@ for proj in projects:
     
     # Stop all other tests from next sub-projects, if one test failed
     if not results[proj.name]:
-        print(f"\n❌ Test failed for {proj.name}, stopping execution.")
+        print(f"\n❌ Pytest failed for {proj.name}, stopping execution.")
         sys.exit(1)
         
 
 # Final result
-print("\n=== Test Summary ===")
+print("\n=== Pytest Summary ===")
 all_ok = True
 for name, ok in results.items():
     status = "✅ PASSED" if ok else "❌ FAILED"
