@@ -1,11 +1,21 @@
 {
   "name": "badprog_leetcode_python",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
       "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
     }
-  }
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/.devcontainer,target=/workspace/.devcontainer,type=bind,consistency=cached",
+    "source=venv,target=/workspace/venv,type=volume",
+    "source=pycache,target=/workspace/pycache,type=volume",
+    "source=pytest_cache,target=/workspace/.pytest_cache,type=volume"
+  ],
+  "postCreateCommand": "/bin/bash /workspace/.devcontainer/entrypoint.sh"
 }

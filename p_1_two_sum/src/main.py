@@ -1,6 +1,8 @@
+# https://github.com/badprog/badprog_leetcode_python
+
 ######################################
 # import
-from solution import Solution # from file import class
+from src.solution import Solution # from file import class
 
 ####################################
 def hello(name: str) -> str:
