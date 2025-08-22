@@ -2,6 +2,12 @@
 
 ######################################
 # import
+import sys
+import pathlib
+
+# Adding the parent directory of this file to the sys.path
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
+
 from typing import List
 from src.solution import Solution, ListNode, Optional # from file import class
 
