@@ -1,6 +1,13 @@
 # https://github.com/badprog/badprog_leetcode_python
 
-from typing import List
+############################
+# import
+import sys
+import pathlib
+
+# Adding the parent directory of this file to the sys.path
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
+
 import pytest
 from src.solution import Solution
 
