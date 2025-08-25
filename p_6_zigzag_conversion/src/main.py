@@ -14,14 +14,12 @@ from typing import List
 ################
 #
 def main():
-    print("Hello from Badprog, Leetcode challenge 4 and Python :D")
+    print("Hello from Badprog, Leetcode challenge 6 and Python :D")
     solution = Solution()
-    # list1: List[int] = [1,2]
-    list1: List[int] = [1,2,6,0,2,1,4,9]
-    list2: List[int] = [4,5,6,8,9]
-    list1.sort()
-    list2.sort()
-    result = solution.findMedianSortedArrays(list1, list2)
+    # s = "PAYPALISHIRING"
+    s = "AB"
+    num_rows = 1
+    result = solution.convert(s, num_rows)
     print("result = {}", result)
     
 ################
