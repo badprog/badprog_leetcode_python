@@ -14,7 +14,7 @@ from typing import List
 ################
 #
 def main():
-    print("Hello from Badprog, Leetcode challenge 5 and Rust :D")
+    print("Hello from Badprog, Leetcode challenge 5 and Python :D")
     solution = Solution()
     s = "abracadabra"
     result = solution.longestPalindrome(s)

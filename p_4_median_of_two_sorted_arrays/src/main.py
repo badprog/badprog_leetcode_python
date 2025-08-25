@@ -14,7 +14,7 @@ from typing import List
 ################
 #
 def main():
-    print("Hello from Badprog, Leetcode challenge 4 and Rust :D")
+    print("Hello from Badprog, Leetcode challenge 4 and Python :D")
     solution = Solution()
     # list1: List[int] = [1,2]
     list1: List[int] = [1,2,6,0,2,1,4,9]
